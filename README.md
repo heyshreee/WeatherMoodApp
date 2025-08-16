@@ -1,6 +1,9 @@
 # WeatherMoodApp
 To check the weather and display a current location weather.
 
+[![WeatherMoodApp Screenshot](assets/screenshot.png)](https://heyshreee.github.io/WeatherMoodApp/)
+
+
 ## 🌦️ Live Demo
 Check out the live app here 👉 [WeatherMoodApp](https://heyshreee.github.io/WeatherMoodApp/)
 
