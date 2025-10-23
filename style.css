@@ -54,7 +54,7 @@ html {
 }
 #city-img {
   width: 100%;
-  height: 400px;
+  height: clamp(300px, 45vh, 600px);
   border-radius: 20px;
   object-fit: cover;
 }
@@ -225,3 +225,215 @@ html {
     opacity: 1;
     transform: translateY(0);
 }
+
+/* Hero header and cards for new layout */
+.hero {
+  height: clamp(300px, 50vh, 600px);
+  min-height: 300px;
+  overflow: hidden;
+}
+
+.hero-bg {
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1);
+  will-change: transform;
+  animation: heroKenBurns 24s ease-in-out infinite alternate, heroColor 0.8s ease forwards;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, var(--hero-tint-start, rgba(0,0,0,0.35)) 0%, var(--hero-tint-end, rgba(0,0,0,0.6)) 100%);
+  color: #fff;
+  padding-bottom: 1rem;
+  backdrop-filter: saturate(110%) blur(1.5px);
+}
+
+.app-title {
+  color: #fff;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.5);
+}
+
+.hero .search-box {
+  max-width: 520px;
+}
+
+/* Override legacy absolute positioning for hero display */
+.hero #city-name {
+  position: static;
+  top: auto;
+  font-size: clamp(2rem, 6vw, 4rem);
+}
+
+.hero .weather-status {
+  color: #fff;
+}
+
+.card {
+  border: none;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(8px) saturate(120%);
+  -webkit-backdrop-filter: blur(8px) saturate(120%);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+
+.card-body h5 {
+  font-weight: 600;
+}
+
+.city-weather-status img {
+  max-height: 240px;
+  object-fit: contain;
+}
+
+/* Ensure hero image fills and removes old rounded corners */
+.hero #city-img {
+  height: 100%;
+  border-radius: 0;
+}
+
+/* Make hero search input take full available width */
+.hero #search-input {
+  width: 100% !important;
+}
+
+/* Decorative vignette overlay */
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(80% 60% at 50% 40%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.35) 100%);
+}
+
+/* Ken Burns animation */
+@keyframes heroKenBurns {
+  0% { transform: scale(1) translate3d(0, 0, 0); }
+  100% { transform: scale(1.08) translate3d(0, 0, 0); }
+}
+
+/* Grayscale to color intro */
+@keyframes heroColor {
+  0% { filter: grayscale(40%) saturate(90%); }
+  100% { filter: grayscale(0%) saturate(105%); }
+}
+
+/* Weather mood tints via CSS variables on the hero */
+.hero.Clear {
+  --hero-tint-start: rgba(255, 193, 7, 0.25);
+  --hero-tint-end: rgba(255, 159, 64, 0.55);
+}
+.hero.Clouds {
+  --hero-tint-start: rgba(108, 117, 125, 0.25);
+  --hero-tint-end: rgba(73, 80, 87, 0.55);
+}
+.hero.Rain {
+  --hero-tint-start: rgba(0, 123, 255, 0.25);
+  --hero-tint-end: rgba(0, 123, 255, 0.55);
+}
+.hero.Snow {
+  --hero-tint-start: rgba(173, 216, 230, 0.25);
+  --hero-tint-end: rgba(173, 216, 230, 0.55);
+}
+.hero.Thunderstorm {
+  --hero-tint-start: rgba(111, 66, 193, 0.25);
+  --hero-tint-end: rgba(102, 16, 242, 0.55);
+}
+
+/* Respect user motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .hero-bg { animation: none !important; }
+  #city-img,
+  #city-weather-img,
+  .fade-text { transition: none !important; }
+}
+
+/* Smooth theme transitions */
+html, body, main, .card, .hero-overlay,
+.autocomplete-list, .hourly-list > div, .daily-list > div {
+  transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+
+/* ---------------- New UI Elements ---------------- */
+/* Autocomplete list below search */
+.autocomplete-list {
+  position: absolute;
+  z-index: 1050;
+  width: 100%;
+  max-width: 520px;
+  margin-top: 4px;
+  background: #ffffff;
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.autocomplete-item {
+  display: block;
+  width: 100%;
+  padding: 8px 12px;
+  text-align: left;
+  background: #fff;
+  border: 0;
+}
+.autocomplete-item:hover {
+  background: #f1f5f9;
+}
+
+/* Position container relative so absolute autocomplete anchors correctly */
+.hero .p-3 { position: relative; }
+
+/* Forecast lists */
+.hourly-list > div,
+.daily-list > div {
+  min-width: 88px;
+  padding: 10px 8px;
+  border-radius: 10px;
+  background: #f8fafc;
+  border: 1px solid rgba(0,0,0,0.06);
+}
+
+/* Forecast charts */
+#hourly-chart,
+#daily-chart {
+  width: 100% !important;
+  height: 220px !important;
+  display: block;
+}
+
+/* ---------------- Optional Dark Theme ---------------- */
+.dark-theme body,
+.dark-theme html {
+  background: #0b1220;
+  color: #e2e8f0;
+}
+.dark-theme {
+  /* Override Bootstrap variables for dark mode */
+  --bs-body-bg: #0b1220;
+  --bs-body-color: #e2e8f0;
+  --bs-card-bg: rgba(17, 24, 39, 0.6);
+  --bs-card-color: #e2e8f0;
+  --bs-card-border-color: rgba(148, 163, 184, 0.15);
+}
+.dark-theme .card {
+  background: var(--bs-card-bg) !important;
+  color: var(--bs-card-color) !important;
+  border: 1px solid var(--bs-card-border-color) !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+}
+.dark-theme .card .card-title { color: var(--bs-card-color); }
+.dark-theme .text-muted { color: #94a3b8 !important; }
+.dark-theme .autocomplete-list {
+  background: #0f172a;
+  border-color: rgba(148,163,184,0.2);
+}
+.dark-theme .autocomplete-item { background: transparent; color: #e2e8f0; }
+.dark-theme .autocomplete-item:hover { background: rgba(148,163,184,0.12); }
+.dark-theme .hourly-list > div,
+.dark-theme .daily-list > div {
+  background: rgba(148,163,184,0.08);
+  border-color: rgba(148,163,184,0.2);
+}
+.dark-theme .hero-overlay { background: linear-gradient(180deg, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0.75) 100%); }

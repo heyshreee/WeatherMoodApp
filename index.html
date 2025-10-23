@@ -14,57 +14,141 @@
 
     <link rel="stylesheet" href="style.css" />
   </head>
-  <body >
-    <div class="container d-flex align-items-center shadow-lg  vh-100">
-      <div class="left-side flex-fill vh-100">
-        <div class="heading">
-          <h1>WeatherMoodApp</h1>
-        </div>
-        <div class="search-box my-4 ">
-          <input
-            type="text"
-            id="search-input"
-            placeholder="Enter city name..."
-          />
-          <button id="search-button"><i class="fas fa-search"></i></button>
-        </div>
-        <div class="city-info d-flex flex-column align-items-center">
-          <img id="city-img" src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/32/Chennai_Central.jpg/330px-Chennai_Central.jpg" alt="City Image" />
-          <div id="city-name" class="city-status Clear">Chennai</div>
-        </div>
-      </div>
-      <div class="right-side flex-fill vh-100">
-        <div class="city-weather-status">
-          <img id="city-weather-img" src="assets/Clouds.gif" alt="city-weather-status" />
-        </div>
-        <div class="weather-status">
-          <div class="status ">
-            Weather Status: 
+  <body>
+    <div class="container-fluid d-flex flex-column p-0">
+      <header class="hero position-relative">
+        <img
+          id="city-img"
+          class="hero-bg w-100 img-fluid fade-in"
+          src="https://via.placeholder.com/1600x600.png?text=Loading+city..."
+          alt="City Image"
+        />
+        <div class="hero-overlay d-flex flex-column justify-content-between h-150">
+          <div class="p-3">
+            <div class="heading text-start">
+              <h1 class="app-title m-0">WeatherMoodApp</h1>
+            </div>
+            <div class="search-box my-3 d-flex">
+              <input
+                type="text"
+                id="search-input"
+                class="form-control"
+                placeholder="Enter city name..."
+              />
+              <button id="search-button" class="btn btn-primary ms-2" type="button" aria-label="Search city">
+                <span class="btn-label"><i class="fas fa-search"></i></span>
+                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
+              </button>
+            </div>
+            <div class="d-flex flex-wrap gap-2 align-items-center">
+              <div class="btn-group" role="group" aria-label="Units toggle" id="units-toggle">
+                <button type="button" id="unit-c" class="btn btn-outline-light btn-sm active">°C</button>
+                <button type="button" id="unit-f" class="btn btn-outline-light btn-sm">°F</button>
+              </div>
+              <div class="d-flex align-items-center ms-2">
+                <select id="favorites-select" class="form-select form-select-sm" style="min-width: 180px">
+                  <option value="" selected>Favorites</option>
+                </select>
+                <button id="add-favorite" class="btn btn-outline-light btn-sm ms-2" type="button" title="Add current city to favorites">
+                  <i class="fas fa-star"></i>
+                </button>
+                <button id="delete-favorite" class="btn btn-outline-light btn-sm ms-2" type="button" title="Delete selected favorite">
+                  <i class="fas fa-trash"></i>
+                </button>
+                <button id="theme-toggle" class="btn btn-outline-light btn-sm ms-2" type="button" title="Toggle theme">
+                  <i class="fas fa-moon"></i>
+                </button>
+              </div>
+            </div>
+            <div id="autocomplete-list" class="autocomplete-list"></div>
           </div>
-          <!-- <i class="fas fa-sun sunny"></i>
-          <i class="fas fa-cloud cloudy"></i>
-          <i class="fas fa-cloud-showers-heavy rainy"></i>
-          <i class="fas fa-snowflake snowy"></i>
-          <i class="fas fa-smog foggy"></i>
-          <i class="fas fa-bolt stormy"></i>
-          <i class="fas fa-wind windy"></i>
-          <i class="fas fa-sunrise sunrise"></i>
-          <i class="fas fa-sunset sunset"></i> -->
-          <span id="status-text">Sunny </span>
-        </div>
-        <div class="weather-details">
-          <div class="temperature"><span id="temperature">--</span>°C</div>
-          <div class="weather-description">
-            <span id="weather-description">description--</span>
-          </div>
-          <div class="humidity">Humidity: <span id="humidity">--</span>%</div>
-          <div class="wind-speed">
-            Wind Speed: <span id="wind-speed">--</span> m/s
+          <div class="text-center pb-4">
+            <div id="city-name" class="city-status Clear fade-text show">Loading...</div>
+            <div class="weather-status mt-2">
+              <span id="status-text" class="fade-text show">Loading...</span>
+            </div>
           </div>
         </div>
-      </div>
+      </header>
+
+      <main class="container py-4">
+        <div class="row g-4">
+          <div class="col-12 col-lg-4">
+            <div class="card shadow-sm h-100">
+              <div class="card-body text-center">
+                <h5 class="card-title mb-3">Now</h5>
+                <div class="temperature">--</div>
+                <div class="weather-description">description--</div>
+                <div class="feels-like mt-2">Feels like: -- °<span class="temp-unit">C</span></div>
+                <div class="temp-range mt-1">Min/Max: <span class="temp-min">--</span>/<span class="temp-max">--</span> °<span class="temp-unit">C</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-lg-4">
+            <div class="card shadow-sm h-100">
+              <div class="card-body text-center">
+                <h5 class="card-title mb-3">Details</h5>
+                <div class="humidity">Humidity: --%</div>
+                <div class="wind-speed">Wind Speed: -- m/s</div>
+                <div class="wind-direction">Wind Direction: --</div>
+                <div class="pressure">Pressure: -- hPa</div>
+                <div class="visibility">Visibility: -- km</div>
+                <div class="cloudiness">Cloudiness: --%</div>
+                <div class="sunrise">Sunrise: --</div>
+                <div class="sunset">Sunset: --</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-lg-4">
+            <div class="card shadow-sm h-100">
+              <div class="card-body text-center">
+                <h5 class="card-title mb-3">Visual</h5>
+                <div class="city-weather-status">
+                  <img id="city-weather-img" class="fade-in" src="https://via.placeholder.com/400x300.png?text=Loading+weather..." alt="city-weather-status" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-4 mt-1">
+          <div class="col-12 col-lg-8">
+            <div class="card shadow-sm h-100">
+              <div class="card-body">
+                <h5 class="card-title mb-3">Hourly Forecast</h5>
+                <canvas id="hourly-chart" height="120" class="mb-3"></canvas>
+                <div id="hourly-list" class="hourly-list d-flex gap-3 overflow-auto"></div>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-lg-4">
+            <div class="card shadow-sm h-100">
+              <div class="card-body">
+                <h5 class="card-title mb-3">Air Quality</h5>
+                <div id="aqi-badge" class="badge bg-secondary">--</div>
+                <div id="aqi-details" class="small mt-2 text-muted"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-4 mt-1">
+          <div class="col-12">
+            <div class="card shadow-sm h-100">
+              <div class="card-body">
+                <h5 class="card-title mb-3">Daily Forecast</h5>
+                <canvas id="daily-chart" height="140" class="mb-3"></canvas>
+                <div id="daily-list" class="daily-list d-flex gap-3 overflow-auto"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
     <script src="script.js"></script>
   </body>
 </html>
