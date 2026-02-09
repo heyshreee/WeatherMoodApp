@@ -2,11 +2,6 @@
 
 Convenient, responsive weather app with search, favorites, unit toggle, theme, forecast charts, and air quality.
 
-[![WeatherMoodApp Screenshot](assets/screenshot.png)](https://heyshreee.github.io/WeatherMoodApp/)
-
-## 🖼️ Chat Preview
-
-![Chart Preview](assets/chart.png)
 
 ## 🌐 Live Demo
 
@@ -31,7 +26,7 @@ Convenient, responsive weather app with search, favorites, unit toggle, theme, f
 - `WeatherMoodApp/index.html` — UI layout and sections
 - `WeatherMoodApp/style.css` — styles, dark theme, charts sizing
 - `WeatherMoodApp/script.js` — logic (fetch, UI updates, charts, theme, favorites)
-- `WeatherMoodApp/assets/` — icons, gifs, placeholders
+- `WeatherMoodApp/script.js` — logic (fetch, UI updates, charts, theme, favorites)
 
 ## ⚙️ Setup
 

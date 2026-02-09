@@ -135,6 +135,8 @@ async function fetchWeatherData(city) {
     fetchAQI(data.coord.lat, data.coord.lon);
   } catch {
     if (statusText) statusText.textContent = "City not found";
+    // Optional: set a 'not found' background
+    if (appBg) appBg.style.backgroundImage = "url('https://images.unsplash.com/photo-1594322436404-5a0526db4d13?w=1600&q=80')";
   } finally {
     setSearching(false);
   }
@@ -152,14 +154,10 @@ function updateUI(data) {
   if (mainTemp) mainTemp.textContent = Math.round(data.main.temp);
 
   // Weather Icon
+  // Weather Icon
   if (cityWeatherImage) {
-    // Fallback or mapped icons could be better, but we use what we have or placeholder
-    // Using local assets if available, else simple mapping
-    const validConds = ['Clear', 'Clouds', 'Rain', 'Snow', 'Thunderstorm', 'Drizzle', 'Mist'];
-    const iconName = validConds.includes(cond) ? cond : 'Clear';
-    cityWeatherImage.src = `assets/${iconName}.gif`;
-    // Handle image error fallback
-    cityWeatherImage.onerror = () => { cityWeatherImage.src = `http://openweathermap.org/img/wn/${data.weather[0].icon}@4x.png`; };
+    const iconCode = data.weather[0]?.icon || '01d';
+    cityWeatherImage.src = `https://openweathermap.org/img/wn/${iconCode}@4x.png`;
   }
 
   // --- Background & Photo ---
