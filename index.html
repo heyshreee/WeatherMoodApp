@@ -1,154 +1,184 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>WeatherMoodApp</title>
-    <link rel="icon" href="assets/favicon.png" type="image/png" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-    />
-    <!-- Bootstrap CSS -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <div class="container-fluid d-flex flex-column p-0">
-      <header class="hero position-relative">
-        <img
-          id="city-img"
-          class="hero-bg w-100 img-fluid fade-in"
-          src="https://via.placeholder.com/1600x600.png?text=Loading+city..."
-          alt="City Image"
-        />
-        <div class="hero-overlay d-flex flex-column justify-content-between h-150">
-          <div class="p-3">
-            <div class="heading text-start">
-              <h1 class="app-title m-0">WeatherMoodApp</h1>
-            </div>
-            <div class="search-box my-3 d-flex">
-              <input
-                type="text"
-                id="search-input"
-                class="form-control"
-                placeholder="Enter city name..."
-              />
-              <button id="search-button" class="btn btn-primary ms-2" type="button" aria-label="Search city">
-                <span class="btn-label"><i class="fas fa-search"></i></span>
-                <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true"></span>
-              </button>
-            </div>
-            <div class="d-flex flex-wrap gap-2 align-items-center">
-              <div class="btn-group" role="group" aria-label="Units toggle" id="units-toggle">
-                <button type="button" id="unit-c" class="btn btn-outline-light btn-sm active">°C</button>
-                <button type="button" id="unit-f" class="btn btn-outline-light btn-sm">°F</button>
-              </div>
-              <div class="d-flex align-items-center ms-2">
-                <select id="favorites-select" class="form-select form-select-sm" style="min-width: 180px">
-                  <option value="" selected>Favorites</option>
-                </select>
-                <button id="add-favorite" class="btn btn-outline-light btn-sm ms-2" type="button" title="Add current city to favorites">
-                  <i class="fas fa-star"></i>
-                </button>
-                <button id="delete-favorite" class="btn btn-outline-light btn-sm ms-2" type="button" title="Delete selected favorite">
-                  <i class="fas fa-trash"></i>
-                </button>
-                <button id="theme-toggle" class="btn btn-outline-light btn-sm ms-2" type="button" title="Toggle theme">
-                  <i class="fas fa-moon"></i>
-                </button>
-              </div>
-            </div>
-            <div id="autocomplete-list" class="autocomplete-list"></div>
-          </div>
-          <div class="text-center pb-4">
-            <div id="city-name" class="city-status Clear fade-text show">Loading...</div>
-            <div class="weather-status mt-2">
-              <span id="status-text" class="fade-text show">Loading...</span>
-            </div>
-          </div>
-        </div>
-      </header>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WeatherMood Dashboard</title>
+  <link rel="icon" href="assets/favicon.png" type="image/png" />
 
-      <main class="container py-4">
-        <div class="row g-4">
-          <div class="col-12 col-lg-4">
-            <div class="card shadow-sm h-100">
-              <div class="card-body text-center">
-                <h5 class="card-title mb-3">Now</h5>
-                <div class="temperature">--</div>
-                <div class="weather-description">description--</div>
-                <div class="feels-like mt-2">Feels like: -- °<span class="temp-unit">C</span></div>
-                <div class="temp-range mt-1">Min/Max: <span class="temp-min">--</span>/<span class="temp-max">--</span> °<span class="temp-unit">C</span></div>
-              </div>
-            </div>
-          </div>
+  <!-- Preconnect for performance -->
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
 
-          <div class="col-12 col-lg-4">
-            <div class="card shadow-sm h-100">
-              <div class="card-body text-center">
-                <h5 class="card-title mb-3">Details</h5>
-                <div class="humidity">Humidity: --%</div>
-                <div class="wind-speed">Wind Speed: -- m/s</div>
-                <div class="wind-direction">Wind Direction: --</div>
-                <div class="pressure">Pressure: -- hPa</div>
-                <div class="visibility">Visibility: -- km</div>
-                <div class="cloudiness">Cloudiness: --%</div>
-                <div class="sunrise">Sunrise: --</div>
-                <div class="sunset">Sunset: --</div>
-              </div>
-            </div>
-          </div>
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 
-          <div class="col-12 col-lg-4">
-            <div class="card shadow-sm h-100">
-              <div class="card-body text-center">
-                <h5 class="card-title mb-3">Visual</h5>
-                <div class="city-weather-status">
-                  <img id="city-weather-img" class="fade-in" src="https://via.placeholder.com/400x300.png?text=Loading+weather..." alt="city-weather-status" />
-                </div>
-              </div>
-            </div>
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Defer Scripts for Speed -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" defer></script>
+  <script src="script.js" defer></script>
+</head>
+
+<body>
+  <!-- Background Wrapper -->
+  <div id="app-bg" class="hero-bg"></div>
+
+  <div class="dashboard-container">
+
+    <!-- LEFT SIDEBAR -->
+    <aside class="sidebar glass-card">
+      <div>
+        <div class="search-section">
+          <div class="search-bar">
+            <i class="fas fa-search text-secondary"></i>
+            <input type="text" id="search-input" placeholder="Search city..." autocomplete="off">
+            <div id="search-spinner" class="spinner-border spinner-border-sm text-light d-none" role="status"></div>
           </div>
+          <div id="autocomplete-list" class="autocomplete-list"></div>
         </div>
 
-        <div class="row g-4 mt-1">
-          <div class="col-12 col-lg-8">
-            <div class="card shadow-sm h-100">
-              <div class="card-body">
-                <h5 class="card-title mb-3">Hourly Forecast</h5>
-                <canvas id="hourly-chart" height="120" class="mb-3"></canvas>
-                <div id="hourly-list" class="hourly-list d-flex gap-3 overflow-auto"></div>
-              </div>
-            </div>
+        <div class="current-weather">
+          <h1 id="city-name" class="city-name">--</h1>
+          <div id="date-time" class="date-time">-- --, --:--</div>
+
+          <img id="city-weather-img" class="weather-icon-lg" src="assets/Clear.gif" alt="Weather Condition">
+
+          <div class="temp-wrapper">
+            <span id="main-temp" class="current-temp">--</span>
+            <span class="temp-unit">°C</span>
           </div>
-          <div class="col-12 col-lg-4">
-            <div class="card shadow-sm h-100">
-              <div class="card-body">
-                <h5 class="card-title mb-3">Air Quality</h5>
-                <div id="aqi-badge" class="badge bg-secondary">--</div>
-                <div id="aqi-details" class="small mt-2 text-muted"></div>
-              </div>
-            </div>
+
+          <div id="status-text" class="weather-desc">--</div>
+        </div>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="city-photo-card" id="city-img-card" style="background-image: url('assets/default.jpg');">
+          <div class="city-photo-text">
+            <i class="fas fa-camera"></i> <span id="photo-location">Location View</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MIDDLE CONTENT -->
+    <main class="main-content">
+      <div class="top-nav">
+        <div class="nav-tabs">
+          <button class="nav-tab active">Today</button>
+          <button class="nav-tab" disabled>Week</button>
+        </div>
+        <div class="unit-toggle">
+          <button id="unit-c" class="unit-btn active">°C</button>
+          <button id="unit-f" class="unit-btn">°F</button>
+          <button id="theme-toggle" class="unit-btn"><i class="fas fa-sun"></i></button>
+        </div>
+      </div>
+
+      <section>
+        <h3 class="section-title">Hourly Forecast</h3>
+        <div id="hourly-list" class="hourly-container">
+          <!-- Hourly items injected here -->
+          <div class="glass-card hourly-card">
+            <span>Now</span>
+            <i class="fas fa-sun"></i>
+            <span>--°</span>
+          </div>
+          <!-- ... -->
+        </div>
+      </section>
+
+      <section class="glass-card" style="flex-grow: 1;">
+        <div class="d-flex justify-between align-center mb-2">
+          <h3 class="section-title" style="margin:0;">Temperature Analysis</h3>
+          <!-- <select class="bg-transparent border-0 text-white"><option>Today</option></select> -->
+        </div>
+        <div class="chart-container">
+          <canvas id="hourly-chart"></canvas>
+        </div>
+      </section>
+    </main>
+
+    <!-- RIGHT WIDGETS PANEL -->
+    <aside class="right-panel">
+      <h3 class="section-title">Weather Details</h3>
+
+      <div class="widget-grid">
+
+        <!-- Air Quality -->
+        <div class="glass-card widget-card">
+          <div class="widget-title">
+            <i class="fas fa-wind"></i> Air Quality
+          </div>
+          <div class="widget-value" id="aqi-value">--</div>
+          <div class="widget-desc" id="aqi-status">--</div>
+          <div class="aqi-bar">
+            <div id="aqi-progress" class="aqi-fill"></div>
           </div>
         </div>
 
-        <div class="row g-4 mt-1">
-          <div class="col-12">
-            <div class="card shadow-sm h-100">
-              <div class="card-body">
-                <h5 class="card-title mb-3">Daily Forecast</h5>
-                <canvas id="daily-chart" height="140" class="mb-3"></canvas>
-                <div id="daily-list" class="daily-list d-flex gap-3 overflow-auto"></div>
+        <!-- Wind Status -->
+        <div class="glass-card widget-card">
+          <div class="widget-title">
+            <i class="fas fa-location-arrow"></i> Wind Status
+          </div>
+          <div class="widget-value">
+            <span id="wind-speed-val">--</span> <span style="font-size: 1rem">km/h</span>
+          </div>
+          <div class="d-flex align-center gap-2">
+            <div class="compass">
+              <i id="wind-dir-icon" class="fas fa-long-arrow-alt-up compass-arrow"></i>
+            </div>
+            <span id="wind-dir-text">--</span>
+          </div>
+        </div>
+
+        <!-- Sunrise & Sunset -->
+        <div class="glass-card widget-card">
+          <div class="widget-title">
+            <i class="fas fa-sun"></i> Sun & Moon
+          </div>
+          <div style="margin-top: 10px;">
+            <div class="d-flex align-center mb-2 gap-2">
+              <i class="fas fa-arrow-up text-warning"></i>
+              <div>
+                <div style="font-size: 0.8rem; color: #aaa;">Sunrise</div>
+                <div id="sunrise-val" style="font-weight: 600;">--:--</div>
+              </div>
+            </div>
+            <div class="d-flex align-center gap-2">
+              <i class="fas fa-arrow-down text-warning"></i>
+              <div>
+                <div style="font-size: 0.8rem; color: #aaa;">Sunset</div>
+                <div id="sunset-val" style="font-weight: 600;">--:--</div>
               </div>
             </div>
           </div>
         </div>
-      </main>
-    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-    <script src="script.js"></script>
-  </body>
+        <!-- Humidity & UV (Combined or split) -->
+        <div class="glass-card widget-card"
+          style="flex-direction: row; justify-content: space-between; align-items: center;">
+          <div>
+            <div class="widget-title"><i class="fas fa-water"></i> Humidity</div>
+            <div class="widget-value" id="humidity-val">--%</div>
+            <div class="widget-desc">Normal</div>
+          </div>
+          <div style="height: 50px; width: 1px; background: rgba(255,255,255,0.1);"></div>
+          <div>
+            <div class="widget-title"><i class="fas fa-eye"></i> Visibility</div>
+            <div class="widget-value" id="visibility-val">-- km</div>
+            <div class="widget-desc">Clear</div>
+          </div>
+        </div>
+
+      </div>
+    </aside>
+  </div>
+
+</body>
+
 </html>
