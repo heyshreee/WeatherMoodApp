@@ -95,8 +95,20 @@
 
       <section class="glass-card" style="flex-grow: 1;">
         <div class="d-flex justify-between align-center mb-2">
-          <h3 class="section-title" style="margin:0;">Temperature Analysis</h3>
-          <!-- <select class="bg-transparent border-0 text-white"><option>Today</option></select> -->
+          <div>
+            <h3 class="section-title" style="margin:0;">Temperature Analysis</h3>
+            <p style="font-size: 0.85rem; color: var(--text-secondary); margin: 0;">Average temperature is comparable to
+              yesterday</p>
+          </div>
+          <div class="d-flex gap-3">
+            <div class="d-flex align-center gap-1" style="font-size: 0.8rem;">
+              <span style="width: 8px; height: 8px; background: #fff; border-radius: 50%;"></span> Today
+            </div>
+            <div class="d-flex align-center gap-1" style="font-size: 0.8rem; opacity: 0.6;">
+              <span style="width: 8px; height: 8px; background: #ffffff; border-radius: 50%; opacity: 0.5;"></span>
+              Yesterday
+            </div>
+          </div>
         </div>
         <div class="chart-container">
           <canvas id="hourly-chart"></canvas>

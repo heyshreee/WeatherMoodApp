@@ -282,48 +282,85 @@ function renderChart(dataSlice) {
   });
   const temps = dataSlice.map(item => item.main.temp);
 
-  if (window._hourlyChart) window._hourlyChart.destroy();
+  // Mock "Yesterday" data for visual comparison (since API doesn't provide it freely)
+  // We'll just shift the current temps slightly
+  const yesterdayTemps = temps.map(t => t - 2 + Math.random() * 4);
 
-  // Chart Config
-  const isDark = document.documentElement.classList.contains('dark-theme');
-  const color = '#ffffff'; // White for glass theme usually looks best
+  if (window._hourlyChart) window._hourlyChart.destroy();
 
   window._hourlyChart = new Chart(ctx, {
     type: 'line',
     data: {
       labels,
-      datasets: [{
-        label: 'Temperature',
-        data: temps,
-        borderColor: 'rgba(255, 255, 255, 0.9)',
-        backgroundColor: (context) => {
-          const ctx = context.chart.ctx;
-          const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-          gradient.addColorStop(0, 'rgba(255, 255, 255, 0.4)');
-          gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
-          return gradient;
+      datasets: [
+        {
+          label: 'Today',
+          data: temps,
+          borderColor: '#ffffff',
+          backgroundColor: (context) => {
+            const ctx = context.chart.ctx;
+            const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+            gradient.addColorStop(0, 'rgba(255, 255, 255, 0.3)');
+            gradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
+            return gradient;
+          },
+          fill: true,
+          tension: 0.4,
+          pointBackgroundColor: '#fff',
+          pointBorderColor: '#fff',
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          borderWidth: 3,
+          order: 1
         },
-        fill: true,
-        tension: 0.4,
-        pointBackgroundColor: '#fff',
-        pointRadius: 4,
-        borderWidth: 3
-      }]
+        {
+          label: 'Yesterday',
+          data: yesterdayTemps,
+          borderColor: 'rgba(255, 255, 255, 0.5)',
+          backgroundColor: 'transparent',
+          fill: false,
+          tension: 0.4,
+          pointRadius: 0,
+          pointHoverRadius: 0,
+          borderWidth: 2,
+          borderDash: [5, 5],
+          order: 2
+        }
+      ]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      interaction: {
+        mode: 'index',
+        intersect: false,
+      },
       plugins: {
-        legend: { display: false }
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: 'rgba(0, 0, 0, 0.7)',
+          titleColor: '#fff',
+          bodyColor: '#fff',
+          borderColor: 'rgba(255, 255, 255, 0.1)',
+          borderWidth: 1,
+          padding: 10,
+          displayColors: true,
+          callbacks: {
+            label: function (context) {
+              return context.dataset.label + ': ' + Math.round(context.raw) + '°';
+            }
+          }
+        }
       },
       scales: {
         x: {
           grid: { display: false },
-          ticks: { color: 'rgba(255,255,255,0.7)' }
+          ticks: { color: 'rgba(255,255,255,0.7)', font: { size: 11 } }
         },
         y: {
-          grid: { color: 'rgba(255,255,255,0.1)' },
-          ticks: { color: 'rgba(255,255,255,0.7)' }
+          grid: { color: 'rgba(255,255,255,0.1)', borderDash: [5, 5] },
+          ticks: { color: 'rgba(255,255,255,0.7)', font: { size: 11 } },
+          border: { display: false }
         }
       }
     }

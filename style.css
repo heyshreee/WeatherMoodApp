@@ -477,7 +477,47 @@ body {
 }
 
 
-/* --- Utilities --- */
+/* Utilities */
+.d-flex {
+  display: flex !important;
+}
+
+.flex-column {
+  flex-direction: column !important;
+}
+
+.justify-between {
+  justify-content: space-between !important;
+}
+
+.align-center {
+  align-items: center !important;
+}
+
+.gap-1 {
+  gap: 4px !important;
+}
+
+.gap-2 {
+  gap: 8px !important;
+}
+
+.gap-3 {
+  gap: 16px !important;
+}
+
+.mb-2 {
+  margin-bottom: 8px !important;
+}
+
+.mb-1 {
+  margin-bottom: 4px !important;
+}
+
+.text-center {
+  text-align: center !important;
+}
+
 .section-title {
   font-size: 1.1rem;
   font-weight: 500;
