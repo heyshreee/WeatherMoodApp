@@ -56,7 +56,20 @@ window.onload = () => {
 
   // Update time every minute
   setInterval(updateTimeDisplay, 60000);
+
+  // Initial Entry Animation
+  initAnimations();
 };
+
+function initAnimations() {
+  if (typeof gsap !== 'undefined') {
+    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+    tl.fromTo('.sidebar', { x: -50, opacity: 0 }, { x: 0, opacity: 1, duration: 1 })
+      .fromTo('.main-content > *', { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, stagger: 0.1 }, "-=0.5")
+      .fromTo('.widget-card', { scale: 0.9, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.6, stagger: 0.1 }, "-=0.5");
+  }
+}
 
 // ---------------- UI Helpers ----------------
 
@@ -144,6 +157,14 @@ async function fetchWeatherData(city) {
 
 function updateUI(data) {
   if (!data) return;
+
+  // Animate content refresh
+  if (typeof gsap !== 'undefined') {
+    gsap.fromTo(['.current-weather', '.widget-card', '#hourly-list', '#hourly-chart'],
+      { opacity: 0.5, y: 5 },
+      { opacity: 1, y: 0, duration: 0.4, stagger: 0.05, clearProps: "all" }
+    );
+  }
 
   // --- Basic Info ---
   currentCity = data.name;

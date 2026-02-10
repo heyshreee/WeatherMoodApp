@@ -28,8 +28,9 @@
 body {
   background-color: #111;
   color: var(--text-primary);
-  min-height: 100vh;
-  overflow-x: hidden;
+  height: 100vh;
+  padding: var(--gap);
+  overflow: hidden;
 }
 
 /* Background Wrapper */
@@ -60,8 +61,8 @@ body {
   display: grid;
   grid-template-columns: var(--sidebar-width) 1fr var(--right-panel-width);
   gap: var(--gap);
-  padding: var(--gap);
-  height: 100vh;
+  padding: 0;
+  height: 100%;
   max-width: 1600px;
   margin: 0 auto;
 }
@@ -586,6 +587,11 @@ body {
 }
 
 @media (max-width: 1200px) {
+  body {
+    height: auto;
+    overflow-y: auto;
+    min-height: 100vh;
+  }
 
   /* Tablet / Small Laptop: Sidebar | Main+Right Stacked or Sidebar | Main */
   .dashboard-container {
