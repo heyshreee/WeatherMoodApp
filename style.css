@@ -63,8 +63,9 @@ body {
   gap: var(--gap);
   padding: 0;
   height: 100%;
-  max-width: 1600px;
-  margin: 0 auto;
+  max-width: 100%;
+  width: 100%;
+  margin: 0;
 }
 
 /* Glass Card Base */
@@ -85,7 +86,13 @@ body {
   flex-direction: column;
   padding: 30px;
   height: 100%;
+  overflow-y: auto;
+  scrollbar-width: none;
   justify-content: space-between;
+}
+
+.sidebar::-webkit-scrollbar {
+  display: none;
 }
 
 .search-section {
@@ -375,10 +382,9 @@ body {
 }
 
 .chart-container {
-  flex-grow: 1;
+  height: 350px;
   width: 100%;
   position: relative;
-  min-height: 250px;
 }
 
 /* --- Right Panel Widgets --- */
