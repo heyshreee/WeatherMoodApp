@@ -18,6 +18,78 @@
   --border-radius: 24px;
 }
 
+/* Light Theme Overrides */
+.light-theme {
+  --bg-gradient-1: #f0f2f5;
+  --glass-bg: rgba(255, 255, 255, 0.4);
+  /* More opaque for contrast */
+  --glass-border: 1px solid rgba(0, 0, 0, 0.1);
+  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+  --text-primary: #1a1a1a;
+  --text-secondary: #555555;
+  --accent-color: #007bff;
+}
+
+/* Specific overrides for light mode elements */
+.light-theme body {
+  background-color: #f0f2f5;
+  color: var(--text-primary);
+}
+
+.light-theme .glass-card {
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.light-theme .search-bar {
+  background: rgba(255, 255, 255, 0.5);
+  border-color: rgba(0, 0, 0, 0.1);
+}
+
+.light-theme .search-bar input {
+  color: #333;
+}
+
+.light-theme .search-bar input::placeholder {
+  color: #777;
+}
+
+.light-theme .nav-tab {
+  color: #777;
+}
+
+.light-theme .nav-tab.active {
+  color: #000;
+}
+
+.light-theme .nav-tab.active::after {
+  background: #000;
+}
+
+.light-theme .unit-btn {
+  background: rgba(0, 0, 0, 0.05);
+  color: #333;
+}
+
+.light-theme .unit-btn.active {
+  background: #333;
+  color: #fff;
+}
+
+.light-theme .hourly-card {
+  background: rgba(255, 255, 255, 0.5);
+  border-color: rgba(0, 0, 0, 0.05);
+}
+
+.light-theme .widget-title {
+  color: #666;
+}
+
+/* Adjust chart colors via JS, but maybe base styles here */
+
 * {
   margin: 0;
   padding: 0;
@@ -31,6 +103,7 @@ body {
   height: 100vh;
   padding: var(--gap);
   overflow: hidden;
+  transition: background-color 0.5s ease, color 0.5s ease;
 }
 
 /* Background Wrapper */
@@ -77,7 +150,7 @@ body {
   border-radius: var(--border-radius);
   box-shadow: var(--glass-shadow);
   color: var(--text-primary);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.5s ease, border-color 0.5s ease;
 }
 
 /* --- Left Sidebar --- */
@@ -107,7 +180,8 @@ body {
   border-radius: 12px;
   padding: 12px 16px;
   border: 1px solid rgba(255, 255, 255, 0.08);
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, background 0.5s ease;
+  gap: 10px;
 }
 
 .search-bar:focus-within {
@@ -119,7 +193,7 @@ body {
   border: none;
   color: #fff;
   width: 100%;
-  margin-left: 10px;
+  margin-left: 0;
   outline: none;
   font-size: 1rem;
 }
@@ -479,7 +553,8 @@ body {
   border-bottom: none;
 }
 
-.autocomplete-item:hover {
+.autocomplete-item:hover,
+.autocomplete-item.active {
   background: rgba(255, 255, 255, 0.1);
 }
 

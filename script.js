@@ -1,5 +1,6 @@
 // HTML Elements
 const searchInput = document.getElementById('search-input');
+const clearBtn = document.getElementById('clear-btn');
 const searchSpinner = document.getElementById('search-spinner');
 const cityImageCard = document.getElementById('city-img-card'); // Background element
 const appBg = document.getElementById('app-bg'); // Main background
@@ -42,9 +43,16 @@ const UNSPLASH_ACCESS_KEY = "o94Yz3KJhOMagWX5xQDE_x5gF2HXqw_o0NPQ6l1VZ5Y";
 // ---------------- Initialization ----------------
 window.onload = () => {
   applyUnitsUI();
-  applyThemeFromStorage();
 
-  if (searchInput) searchInput.value = '';
+  // Theme Init
+  const savedTheme = localStorage.getItem('theme') || 'dark';
+  if (savedTheme === 'light') document.body.classList.add('light-theme');
+  updateThemeIcon();
+
+  if (searchInput) {
+    searchInput.value = '';
+    toggleClearBtn(false);
+  }
 
   navigator.geolocation.getCurrentPosition(
     pos => getWeather(pos.coords.latitude, pos.coords.longitude),
@@ -87,6 +95,12 @@ function setSearching(isLoading) {
   if (!searchInput) return;
   searchInput.disabled = isLoading;
   if (searchSpinner) searchSpinner.classList.toggle('d-none', !isLoading);
+  if (clearBtn && isLoading) clearBtn.classList.add('d-none');
+  if (clearBtn && !isLoading && searchInput.value.length > 0) clearBtn.classList.remove('d-none');
+}
+
+function toggleClearBtn(show) {
+  if (clearBtn) clearBtn.classList.toggle('d-none', !show);
 }
 
 function applyUnitsUI() {
@@ -172,7 +186,14 @@ function updateUI(data) {
 
   const cond = data.weather[0]?.main || "Clear";
   if (statusText) statusText.textContent = data.weather[0]?.description || cond;
-  if (mainTemp) mainTemp.textContent = Math.round(data.main.temp);
+  if (statusText) statusText.textContent = data.weather[0]?.description || cond;
+
+  // Animate Temp
+  if (mainTemp) {
+    const startTemp = parseFloat(mainTemp.textContent) || 0;
+    const endTemp = Math.round(data.main.temp);
+    animateValue(mainTemp, startTemp, endTemp, 1000);
+  }
 
   // Weather Icon
   // Weather Icon
@@ -459,64 +480,188 @@ function debounce(fn, wait) {
 
 // ---------------- Event Listeners ----------------
 
-if (searchInput) {
-  searchInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
-      fetchWeatherData(searchInput.value.trim());
-      // Clear autocomplete
-      if (autocompleteList) autocompleteList.innerHTML = '';
-    }
-  });
+// ---------------- Event Listeners ----------------
 
-  // Autocomplete
+let currentFocus = -1;
+
+if (searchInput) {
+  // Input handling
   searchInput.addEventListener('input', debounce(async (e) => {
     const val = e.target.value.trim();
+    toggleClearBtn(val.length > 0);
+
     if (val.length < 3) {
-      if (autocompleteList) autocompleteList.innerHTML = '';
+      closeAutocomplete();
       return;
     }
 
-    const res = await fetch(`https://api.openweathermap.org/geo/1.0/direct?q=${val}&limit=5&appid=${WEATHER_API_KEY}`);
-    const data = await res.json();
-
-    if (autocompleteList) {
-      autocompleteList.innerHTML = data.map(item => `
-                <button class="autocomplete-item" onclick="fetchWeatherData('${item.name}')">
-                    ${item.name}, ${item.country}
-                </button>
-            `).join('');
+    currentFocus = -1; // Reset focus
+    try {
+      const res = await fetch(`https://api.openweathermap.org/geo/1.0/direct?q=${val}&limit=5&appid=${WEATHER_API_KEY}`);
+      const data = await res.json();
+      renderAutocomplete(data, val);
+    } catch (e) {
+      console.error(e);
     }
   }, 300));
-}
 
-// Helper for autocomplete clicks (since we used inline onclick string above, but that needs global scope)
-// Better to delegate
-if (autocompleteList) {
-  autocompleteList.addEventListener('click', (e) => {
-    if (e.target.classList.contains('autocomplete-item')) {
-      // Logic handled by onclick in HTML string or we can remove onclick there and do it here
-      // Let's rely on the onclick above, but we need to make fetchWeatherData global or attach it
-      // For safety, let's use the event listener approach properly:
+  // Keyboard Navigation
+  searchInput.addEventListener('keydown', (e) => {
+    if (!autocompleteList) return;
+    let items = autocompleteList.getElementsByClassName('autocomplete-item');
+    if (e.key === 'ArrowDown') {
+      currentFocus++;
+      addActive(items);
+    } else if (e.key === 'ArrowUp') {
+      currentFocus--;
+      addActive(items);
+    } else if (e.key === 'Enter') {
+      e.preventDefault();
+      if (currentFocus > -1 && items) {
+        items[currentFocus].click();
+      } else {
+        // Normal search if no selection
+        fetchWeatherData(searchInput.value.trim());
+        closeAutocomplete();
+      }
     }
   });
 }
-// Expose for inline onclick if needed, or better:
+
+function addActive(items) {
+  if (!items) return;
+  removeActive(items);
+  if (currentFocus >= items.length) currentFocus = 0;
+  if (currentFocus < 0) currentFocus = items.length - 1;
+  items[currentFocus].classList.add('active');
+  // Scroll into view if needed
+  items[currentFocus].scrollIntoView({ block: 'nearest' });
+}
+
+function removeActive(items) {
+  for (let i = 0; i < items.length; i++) {
+    items[i].classList.remove('active');
+  }
+}
+
+function closeAutocomplete() {
+  if (autocompleteList) autocompleteList.innerHTML = '';
+  currentFocus = -1;
+}
+
+function renderAutocomplete(data, query) {
+  if (!autocompleteList) return;
+  if (!data || data.length === 0) {
+    closeAutocomplete();
+    return;
+  }
+
+  // Country flag helper (ISO 3166-1 alpha-2 to flag emoji)
+  const getFlag = (cc) => {
+    if (!cc) return '';
+    return cc.toUpperCase().replace(/./g, char => String.fromCodePoint(char.charCodeAt(0) + 127397));
+  };
+
+  const regex = new RegExp(`(${query})`, 'gi');
+
+  autocompleteList.innerHTML = data.map(item => {
+    // Highlight match
+    const highlightedName = item.name.replace(regex, "<strong>$1</strong>");
+    const flag = getFlag(item.country);
+
+    // JSON stringify for safe onclick argument
+    // But easier to just pass name string if unique enough, or handle via event delegation
+    // We'll stick to name for now.
+    return `
+      <div class="autocomplete-item" onclick="selectCity('${item.name.replace(/'/g, "\\'")}')">
+          <span>${flag} ${highlightedName}</span>
+          <span style="font-size: 0.8em; opacity: 0.7; margin-left: auto;">${item.state || ''}, ${item.country}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+// Global scope for onclick
+window.selectCity = (cityName) => {
+  searchInput.value = cityName;
+  fetchWeatherData(cityName);
+  closeAutocomplete();
+  toggleClearBtn(true);
+};
+
+// Clear Button
+if (clearBtn) {
+  clearBtn.addEventListener('click', () => {
+    if (searchInput) {
+      searchInput.value = '';
+      searchInput.focus();
+      toggleClearBtn(false);
+      closeAutocomplete();
+    }
+  });
+}
+
+// Click Outside to close
+document.addEventListener('click', (e) => {
+  if (!searchInput.contains(e.target) && !autocompleteList.contains(e.target)) {
+    closeAutocomplete();
+  }
+});
+
+// Original fetchWeatherData exposure
 window.fetchWeatherData = fetchWeatherData;
 
 
 if (unitCBtn) unitCBtn.addEventListener('click', () => setUnits('metric'));
 if (unitFBtn) unitFBtn.addEventListener('click', () => setUnits('imperial'));
 
-// Theme Toggle (Visual only for now since glass is dark-ish by default)
+// Theme Toggle
 if (themeToggleBtn) {
   themeToggleBtn.addEventListener('click', () => {
-    const isDark = document.documentElement.classList.toggle('dark-theme');
-    localStorage.setItem('theme', isDark ? 'dark' : 'light');
-    applyThemeFromStorage();
+    document.body.classList.toggle('light-theme');
+    const isLight = document.body.classList.contains('light-theme');
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    updateThemeIcon();
+
+    // Re-render chart to update colors if needed
+    if (window._hourlyChart) {
+      // For now, simpler to just reload or let user refresh for perfect chart colors
+      // Or we can manually update chart options here
+    }
   });
 }
 
+function updateThemeIcon() {
+  if (!themeToggleBtn) return;
+  const isLight = document.body.classList.contains('light-theme');
+
+  // GSAP rotation
+  if (typeof gsap !== 'undefined') {
+    gsap.to(themeToggleBtn, { rotation: '+=360', duration: 0.5, ease: 'back.out(1.7)' });
+  }
+
+  themeToggleBtn.innerHTML = isLight ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+}
+
+function animateValue(obj, start, end, duration) {
+  if (start === end) return;
+  let startTimestamp = null;
+  const step = (timestamp) => {
+    if (!startTimestamp) startTimestamp = timestamp;
+    const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+    // Ease out quart
+    const ease = 1 - Math.pow(1 - progress, 4);
+
+    obj.innerHTML = Math.floor(progress * (end - start) + start);
+    if (progress < 1) {
+      window.requestAnimationFrame(step);
+    } else {
+      obj.innerHTML = end;
+    }
+  };
+  window.requestAnimationFrame(step);
+}
+
 function applyThemeFromStorage() {
-  // Glass theme is usually consistent, but we can darken the background overlay
-  // For now, minimal changes.
+  // Deprecated, logic moved to init
 }
